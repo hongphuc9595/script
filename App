@@ -1,18 +1,1 @@
 choco install adobereader flashplayerplugin googlechrome flashplayeractivex jre8 7zip.install vlc winrar powershell skype teamviewer dotnet4.5 itunes dotnetfx viber office365proplus 
-choco install 
-choco install 
-choco install 
-choco install 
-choco install 
-choco install 
-choco install winrar
-choco install 
-choco install 
-choco install 
-choco install dotnet3.5
-choco install 
-choco install 
-choco install 
-choco install 
-choco install 
-choco install microsoft-teams
