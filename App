@@ -1,2 +1,2 @@
 choco feature enable -n=allowGlobalConfirmation
-choco install adobereader /a flashplayerplugin /a googlechrome /a flashplayeractivex /a jre8 /a 7zip.install /a vlc /a winrar /a powershell /a skype /a teamviewer /a dotnet4.5 /a itunes /a dotnetfx /a viber /a  office365proplus /a
+choco install adobereader flashplayerplugin googlechrome flashplayeractivex jre8 7zip.install vlc winrar powershell skype teamviewer dotnet4.5 itunes dotnetfx viber office365proplus
