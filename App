@@ -1,2 +1,0 @@
-choco feature enable -n=allowGlobalConfirmation
-choco install adobereader flashplayerplugin googlechrome flashplayeractivex jre8 vlc winrar powershell adobereader-update vcredist140 javaruntime skype adobeshockwaveplayer dotnetfx teamviewer k-litecodecpackfull
