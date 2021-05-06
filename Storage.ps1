@@ -1,4 +1,3 @@
-﻿$connectTestResult = Test-NetConnection -ComputerName accountsharefilenhphuc.file.core.windows.net -Port 445
 if ($connectTestResult.TcpTestSucceeded) {
     # Save the password so the drive will persist on reboot
     cmd.exe /C "cmdkey /add:`"accountsharefilenhphuc.file.core.windows.net`" /user:`"Azure\accountsharefilenhphuc`" /pass:`"WRDu06VWMI7ppQQGHVP80l5HxBs4SHPZbgUyz6j5sVo+gxXBA8cXwTti/SRr3mLHprIeKNv3qBDRvlxQM858Bw==`""
