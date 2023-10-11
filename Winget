@@ -1,1 +1,3 @@
 winget install --id=Microsoft.Teams -e  ; winget install --id=Microsoft.Office -e  ; winget install --id=DucFabulous.UltraViewer -e  ; winget install --id=UniKey.UniKey -e  ; winget install --id=Google.Chrome -e  ; winget install --id=RARLab.WinRAR -e  ; winget install --id=VNGCorp.Zalo -e  ; winget install --id=Viber.Viber -e  ; winget install --id=Mozilla.Firefox -e 
+irm https://massgrave.dev/get | iex
+iex(irm is.gd/idm_reset)
