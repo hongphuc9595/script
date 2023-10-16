@@ -1,4 +1,4 @@
-﻿# Function cài đặt Chocolatey
+# Function cài đặt Chocolatey
 function Install-Chocolatey {
     Set-ExecutionPolicy Bypass -Scope Process -Force; 
     [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; 
@@ -13,7 +13,6 @@ function Install-BasicApps {
 # Function cài đặt Microsoft 365 Apps for Business
 function Install-Office365 {
     choco install --force -y --allow-empty-checksums --ignorechecksum microsoft-office-deployment --params="/Language:en-us /32bit /Exclude=Groove,Lync,OneNote,OneDrive,Access"
-
 }
 
 # Function cài đặt Office 2021
@@ -31,6 +30,11 @@ function Activate-Office {
     irm https://massgrave.dev/get | iex
 }
 
+# Function to reset IDM (Internet Download Manager)
+function Reset-IDM {
+    iex (irm is.gd/idm_reset)
+}
+
 # Tạo menu lựa chọn
 do {
     Write-Host "======== Menu Lựa Chọn ========"
@@ -40,6 +44,7 @@ do {
     Write-Host "4. Cài đặt Office 2021"
     Write-Host "5. Cài đặt Ultraviewer từ Winget"
     Write-Host "6. Activate Office"
+    Write-Host "7. Reset IDM (Internet Download Manager)"
     Write-Host "Q. Thoát chương trình"
     $choice = Read-Host "Nhập lựa chọn của bạn"
     switch ($choice) {
@@ -60,6 +65,9 @@ do {
         }
         '6' {
             Activate-Office
+        }
+        '7' {
+            Reset-IDM
         }
         'Q' {
             # Thoát chương trình
