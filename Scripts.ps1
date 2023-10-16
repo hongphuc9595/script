@@ -1,52 +1,46 @@
-# Function cài đặt Chocolatey
+# Function to Install Chocolatey
 function Install-Chocolatey {
     Set-ExecutionPolicy Bypass -Scope Process -Force; 
     [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; 
     iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 }
 
-# Function cài đặt các ứng dụng cơ bản từ Chocolatey
+# Function to Install Basic Applications using Chocolatey
 function Install-BasicApps {
     choco install googlechrome firefox microsoft-teams adobereader teamviewer ultraviewer.install unikey viber zalo winrar --force -y --allow-empty-checksums --ignorechecksum
 }
 
-# Function cài đặt Microsoft 365 Apps for Business
+# Function to Install Microsoft 365 Apps for Business
 function Install-Office365 {
     choco install --force -y --allow-empty-checksums --ignorechecksum microsoft-office-deployment --params="/Language:en-us /32bit /Exclude=Groove,Lync,OneNote,OneDrive,Access"
 }
 
-# Function cài đặt Office 2021
+# Function to Install Office 2021
 function Install-Office2021 {
     choco install -y --allow-empty-checksums --ignorechecksum microsoft-office-deployment --params="/Language:en-us /32bit /Product:ProPlus2021Volume /Exclude=Groove,Lync,OneNote,OneDrive,Access"
 }
 
-# Function cài đặt Ultraviewer từ Winget
-function Install-Ultraviewer {
-    winget install ultraviewer
-}
-
-# Function Activate Office
+# Function to Activate Office
 function Activate-Office {
     irm https://massgrave.dev/get | iex
 }
 
-# Function to reset IDM (Internet Download Manager)
+# Function to Reset IDM (Internet Download Manager)
 function Reset-IDM {
     iex (irm is.gd/idm_reset)
 }
 
-# Tạo menu lựa chọn
+# Create a menu for user selection
 do {
-    Write-Host "======== Menu Lựa Chọn ========"
-    Write-Host "1. Cài đặt Chocolatey"
-    Write-Host "2. Cài đặt ứng dụng cơ bản"
-    Write-Host "3. Cài đặt Microsoft 365 Apps for Business"
-    Write-Host "4. Cài đặt Office 2021"
-    Write-Host "5. Cài đặt Ultraviewer từ Winget"
-    Write-Host "6. Activate Office"
-    Write-Host "7. Reset IDM (Internet Download Manager)"
-    Write-Host "Q. Thoát chương trình"
-    $choice = Read-Host "Nhập lựa chọn của bạn"
+    Write-Host "======== Menu Options ========"
+    Write-Host "1. Install Chocolatey"
+    Write-Host "2. Install Basic Applications"
+    Write-Host "3. Install Microsoft 365 Apps for Business"
+    Write-Host "4. Install Office 2021"
+    Write-Host "5. Activate Office"
+    Write-Host "6. Reset IDM (Internet Download Manager)"
+    Write-Host "Q. Exit the program"
+    $choice = Read-Host "Enter your choice"
     switch ($choice) {
         '1' {
             Install-Chocolatey
@@ -61,21 +55,18 @@ do {
             Install-Office2021
         }
         '5' {
-            Install-Ultraviewer
-        }
-        '6' {
             Activate-Office
         }
-        '7' {
+        '6' {
             Reset-IDM
         }
         'Q' {
-            # Thoát chương trình
+            # Exit the program
             break
         }
         default {
-            # Lựa chọn không hợp lệ
-            Write-Host "Lựa chọn không hợp lệ. Vui lòng thử lại."
+            # Invalid choice
+            Write-Host "Invalid choice. Please try again."
         }
     }
 } while ($choice -ne 'Q' )
