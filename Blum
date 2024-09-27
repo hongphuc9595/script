@@ -1,0 +1,11 @@
+GREEN = "\33[92m"
+RESET = "\033[0m"
+banner = f"""{GREEN}                                                       
+TTTTT  III  N   N   
+  T     I   NN  N  
+  T     I   N N N   
+  T     I   N  NN   
+  T    III  N   N   
+                   with love ❤️{RESET}"""
+
+print(banner)
