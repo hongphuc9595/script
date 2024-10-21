@@ -10,6 +10,7 @@ $chocoApps = @(
     'viber', 
     'zalo', 
     'winrar'
+    'vcredist-all'
 )
 
 $wingetApps = @(
