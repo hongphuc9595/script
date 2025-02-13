@@ -7,7 +7,7 @@ setlocal enabledelayedexpansion
 
 setlocal enabledelayedexpansion
 
-:: Lay thon tin WMIC
+:: Lay thong tin WMIC
 for /f "skip=1 tokens=*" %%A in ('wmic bios get serialnumber 2^>nul') do if not defined SERVICE_TAG set "SERVICE_TAG=%%A"
 for /f "skip=1 tokens=*" %%A in ('wmic computersystem get manufacturer 2^>nul') do if not defined BRAND set "BRAND=%%A"
 for /f "skip=1 tokens=*" %%A in ('wmic computersystem get model 2^>nul') do if not defined MODEL set "MODEL=%%A"
@@ -29,13 +29,12 @@ if not defined SERVICE_TAG (
     exit /b
 )
 
-
 :: Menu lua chon
 :menu
 cls
 echo ======================================================
 echo      Backup + Restore Driver - Data - Wifi Utility
-echo               -----Minh Hai Computer-----
+echo               -----Nguyen Hong Phuc-----
 echo ======================================================
 echo  1. Hien thi thong tin may
 echo  2. Tra cuu thong tin tu web hang
@@ -60,13 +59,12 @@ echo Lua chon khong hop le. Vui long thu lai.
 pause
 goto menu
 
-
 :: Sao luu du lieu
 :backup_data
 cls
 echo ======================================================
 echo                     Sao luu du lieu
-echo               -----Minh Hai Computer-----
+echo               -----Nguyen Hong Phuc-----
 echo ======================================================
 set /p O_SAO_LUU=Nhap ky tu o dia dich (VD: D, E, F): 
 if not exist %O_SAO_LUU%:\ (
@@ -113,9 +111,6 @@ echo Sao luu hoan tat vao thu muc: %THU_MUC_SAO_LUU%
 pause
 goto menu
 
-
-
-
 :: Hien thi thong tin may
 :show_info
 cls
@@ -130,7 +125,6 @@ echo         Dung luong RAM: %RAM%
 echo         Hang SX Ram   : %RAM_MANUFACTURER%
 echo         RAM Bus       : %RAM_SPEED%
 echo         Loai RAM      : %RAM_TYPE%
-
 echo ======================================================
 pause
 goto menu
@@ -146,7 +140,7 @@ for %%A in (DELL HP LENOVO ASUS ACER MSI GIGABYTE) do (
     echo %BRAND_LC% | find /I "%%A" >nul && set "BRAND=%%A"
 )
 
-:: Bang URL tra cuu bao hang hang
+:: Bang URL tra cuu bao hanh hang
 if /I "%BRAND%"=="DELL" set "URL=https://www.dell.com/support/home/en-us/product-support/servicetag/%SERVICE_TAG%"
 if /I "%BRAND%"=="HP" set "URL=https://support.hp.com/us-en/checkWarranty?serialNumber=%SERVICE_TAG%"
 if /I "%BRAND%"=="LENOVO" set "URL=https://support.lenovo.com/us/en/warrantylookup?serial=%SERVICE_TAG%"
@@ -165,8 +159,6 @@ if defined URL (
 
 pause
 goto menu
-
-
 
 :backup
 echo Tien hanh sao luu Driver cua Windows...
@@ -189,14 +181,12 @@ pnputil /add-driver "%backup_dir%\*.inf" /subdirs /install
 echo Restore driver da hoan tat!
 goto menu
 
-
-
 :: Thay doi duong dan mac dinh cua Download, Documents
 :change_default_paths
 cls
 echo ======================================================
 echo    Thay doi duong dan mac dinh Download, Documents
-echo               -----Minh Hai Computer-----
+echo               -----Nguyen Hong Phuc-----
 echo ======================================================
 echo.
 echo Chon kieu thay doi duong dan:
@@ -312,9 +302,6 @@ echo.
 echo Da xuat danh sach WiFi va mat khau ra file: "%OUTPUT_FILE%"
 pause
 goto menu
-
-
-
 
 :end
 exit
