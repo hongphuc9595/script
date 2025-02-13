@@ -91,6 +91,12 @@ function Reset-IDM {
     }
 }
 
+# Hàm thực thi Backup Driver
+function Backup-Driver {
+    iex (irm https://raw.githubusercontent.com/hongphuc9595/script/refs/heads/master/run%20backup%20driver)
+    Write-Host "Backup Driver đã được thực thi."
+}
+
 # Menu cho phép người dùng lựa chọn
 $menuActions = @{
     '1' = { Install-Chocolatey }
@@ -100,6 +106,7 @@ $menuActions = @{
     '5' = { Activate-Office }
     '6' = { Reset-IDM }
     '7' = { Install-BasicAppsWithWinget }
+    '8' = { Backup-Driver }
 }
 
 do {
@@ -111,6 +118,7 @@ do {
     Write-Host "5. Kích hoạt Office"
     Write-Host "6. Reset IDM (Internet Download Manager)"
     Write-Host "7. Cài đặt ứng dụng cơ bản (Winget)"
+    Write-Host "8. Backup Driver"
     Write-Host "Q. Thoát chương trình"
     $choice = Read-Host "Nhập lựa chọn của bạn"
 
