@@ -13,18 +13,6 @@ $chocoApps = @(
     'vcredist-all'
 )
 
-$wingetApps = @(
-    'Google.Chrome', 
-    'Mozilla.Firefox', 
-    'TeamViewer.TeamViewer', 
-    'UniKey.UniKey', 
-    'RARLab.WinRAR', 
-    'Adobe.Acrobat.Reader.64-bit', 
-    'Microsoft.Teams', 
-    'VNGCorp.Zalo', 
-    'Viber.Viber'
-)
-
 # Hàm cài đặt Chocolatey
 function Install-Chocolatey {
     Set-ExecutionPolicy Bypass -Scope Process -Force
@@ -45,18 +33,6 @@ function Install-BasicApps {
     }
 }
 
-# Hàm cài đặt các ứng dụng cơ bản bằng Winget
-function Install-BasicAppsWithWinget {
-    foreach ($app in $wingetApps) {
-        try {
-            winget install --id=$app -e
-            Write-Host "Đã cài đặt thành công $app."
-        } catch {
-            Write-Host "Không thể cài đặt $app. Lỗi: $_"
-        }
-    }
-}
-
 # Hàm cài đặt Microsoft 365 Apps for Business
 function Install-Office365 {
     choco install --force -y --allow-empty-checksums --ignorechecksum microsoft-office-deployment --params="/Language:en-us /32bit /Exclude=Groove,Lync,OneNote,OneDrive,Access"
@@ -67,6 +43,12 @@ function Install-Office365 {
 function Install-Office2021 {
     choco install -y --allow-empty-checksums --ignorechecksum microsoft-office-deployment --params="/Language:en-us /32bit /Product:ProPlus2021Volume /Exclude=Groove,Lync,OneNote,OneDrive,Access"
     Write-Host "Office 2021 đã được cài đặt thành công."
+}
+
+# Hàm cài đặt Office 2024
+function Install-Office2024 {
+    choco install -y --allow-empty-checksums --ignorechecksum microsoft-office-deployment --params="/Language:en-us /32bit /Product:ProPlus2024Retail /Exclude=Groove,Lync,OneNote,OneDrive,Access"
+    Write-Host "Office 2024 đã được cài đặt thành công."
 }
 
 # Hàm kích hoạt Office
@@ -103,9 +85,9 @@ $menuActions = @{
     '2' = { Install-BasicApps }
     '3' = { Install-Office365 }
     '4' = { Install-Office2021 }
-    '5' = { Activate-Office }
-    '6' = { Reset-IDM }
-    '7' = { Install-BasicAppsWithWinget }
+    '5' = { Install-Office2024 }
+    '6' = { Activate-Office }
+    '7' = { Reset-IDM }
     '8' = { Backup-Driver }
 }
 
@@ -115,9 +97,9 @@ do {
     Write-Host "2. Cài đặt ứng dụng cơ bản (Chocolatey)"
     Write-Host "3. Cài đặt Microsoft 365 Apps for Business"
     Write-Host "4. Cài đặt Office 2021"
-    Write-Host "5. Kích hoạt Office"
-    Write-Host "6. Reset IDM (Internet Download Manager)"
-    Write-Host "7. Cài đặt ứng dụng cơ bản (Winget)"
+    Write-Host "5. Cài đặt Office 2024"
+    Write-Host "6. Kích hoạt Office"
+    Write-Host "7. Reset IDM (Internet Download Manager)"
     Write-Host "8. Backup Driver"
     Write-Host "Q. Thoát chương trình"
     $choice = Read-Host "Nhập lựa chọn của bạn"
