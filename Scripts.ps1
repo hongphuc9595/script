@@ -41,13 +41,13 @@ function Install-Office365 {
 
 # Hàm cài đặt Office 2021
 function Install-Office2021 {
-    choco install -y --allow-empty-checksums --ignorechecksum microsoft-office-deployment --params="/Language:en-us /32bit /Product:ProPlus2021Volume /Exclude=Groove,Lync,OneNote,OneDrive,Access"
+    choco install -y --allow-empty-checksums --ignorechecksum microsoft-office-deployment --params="/Language:en-us /32bit /Product:ProPlus2021Volume /Exclude=Groove,Lync,OneNote,Access"
     Write-Host "Office 2021 đã được cài đặt thành công."
 }
 
 # Hàm cài đặt Office 2024
 function Install-Office2024 {
-    choco install -y --allow-empty-checksums --ignorechecksum microsoft-office-deployment --params="/Language:en-us /32bit /Product:ProPlus2024Retail /Exclude=Groove,Lync,OneNote,OneDrive,Access"
+    choco install -y --allow-empty-checksums --ignorechecksum microsoft-office-deployment --params="/Language:en-us /32bit /Product:ProPlus2024Retail /Exclude=Groove,Lync,OneNote,Access"
     Write-Host "Office 2024 đã được cài đặt thành công."
 }
 
