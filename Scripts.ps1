@@ -33,21 +33,15 @@ function Install-BasicApps {
     }
 }
 
-# Hàm cài đặt Microsoft 365 Apps for Business
-function Install-Office365 {
-    choco install --force -y --allow-empty-checksums --ignorechecksum microsoft-office-deployment --params="/Language:en-us /32bit /Exclude=Groove,Lync,OneNote,OneDrive,Access"
-    Write-Host "Microsoft 365 Apps for Business đã được cài đặt thành công."
-}
-
 # Hàm cài đặt Office 2021
 function Install-Office2021 {
-    choco install -y --allow-empty-checksums --ignorechecksum microsoft-office-deployment --params="/Language:en-us /32bit /Product:ProPlus2021Volume /Exclude=Groove,Lync,OneNote,Access"
+    choco install -y --allow-empty-checksums --ignorechecksum microsoft-office-deployment --params="/Language:en-us /32bit /Product:ProPlus2021Volume /RemoveMSI /Exclude=Groove,Lync,OneNote,OneDrive,Access"
     Write-Host "Office 2021 đã được cài đặt thành công."
 }
 
 # Hàm cài đặt Office 2024
 function Install-Office2024 {
-    choco install -y --allow-empty-checksums --ignorechecksum microsoft-office-deployment --params="/Language:en-us /32bit /Product:ProPlus2024Retail /Exclude=Groove,Lync,OneNote,Access"
+    choco install -y --allow-empty-checksums --ignorechecksum microsoft-office-deployment --params="/Language:en-us /32bit /Product:ProPlus2024Retail /RemoveMSI /Exclude=Groove,Lync,OneNote,OneDrive,Access"
     Write-Host "Office 2024 đã được cài đặt thành công."
 }
 
@@ -83,24 +77,22 @@ function Backup-Driver {
 $menuActions = @{
     '1' = { Install-Chocolatey }
     '2' = { Install-BasicApps }
-    '3' = { Install-Office365 }
-    '4' = { Install-Office2021 }
-    '5' = { Install-Office2024 }
-    '6' = { Activate-Office }
-    '7' = { Reset-IDM }
-    '8' = { Backup-Driver }
+    '3' = { Install-Office2021 }
+    '4' = { Install-Office2024 }
+    '5' = { Activate-Office }
+    '6' = { Reset-IDM }
+    '7' = { Backup-Driver }
 }
 
 do {
     Write-Host "======== Menu Options ========"
     Write-Host "1. Cài đặt Chocolatey"
     Write-Host "2. Cài đặt ứng dụng cơ bản (Chocolatey)"
-    Write-Host "3. Cài đặt Microsoft 365 Apps for Business"
-    Write-Host "4. Cài đặt Office 2021"
-    Write-Host "5. Cài đặt Office 2024"
-    Write-Host "6. Kích hoạt Office"
-    Write-Host "7. Reset IDM (Internet Download Manager)"
-    Write-Host "8. Backup Driver"
+    Write-Host "3. Cài đặt Office 2021"
+    Write-Host "4. Cài đặt Office 2024"
+    Write-Host "5. Kích hoạt Office"
+    Write-Host "6. Reset IDM (Internet Download Manager)"
+    Write-Host "7. Backup Driver"
     Write-Host "Q. Thoát chương trình"
     $choice = Read-Host "Nhập lựa chọn của bạn"
 
