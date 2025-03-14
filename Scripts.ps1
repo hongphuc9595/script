@@ -11,6 +11,7 @@ $chocoApps = @(
     'zalo', 
     'winrar', # Đã sửa lỗi thiếu dấu phẩy ở đây
     'vcredist-all'
+    'Powertoys'
 )
 
 # Hàm cài đặt Chocolatey
