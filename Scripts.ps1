@@ -52,7 +52,7 @@ function Install-Office2024 {
 
 # Hàm kích hoạt Office
 function Activate-Office {
-    $script = irm https://massgrave.dev/get
+    $script = irm https://get.activated.win
     if ($script) {
         iex $script
         Write-Host "Office đã được kích hoạt thành công." -ForegroundColor Green
