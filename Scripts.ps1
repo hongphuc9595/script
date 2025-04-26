@@ -1,16 +1,16 @@
 # Danh sách các ứng dụng cần cài đặt
 $chocoApps = @(
-    'googlechrome', 
-    'firefox', 
-    'microsoft-teams', 
-    'adobereader', 
-    'teamviewer', 
-    'ultraviewer.install', 
-    'unikey', 
-    'viber', 
-    'zalo', 
-    'winrar', # Đã sửa lỗi thiếu dấu phẩy ở đây
-    'vcredist-all'
+    'googlechrome',
+    'firefox',
+    'microsoft-teams',
+    'adobereader',
+    'teamviewer',
+    'ultraviewer.install',
+    'unikey',
+    'viber',
+    'zalo',
+    'winrar',
+    'vcredist-all', # Đã sửa lỗi thiếu dấu phẩy ở đây
     'Powertoys'
 )
 
@@ -81,7 +81,7 @@ function Backup-Driver {
 # Hàm cập nhật Windows
 function Update-Windows {
     Write-Host "Đang kiểm tra cập nhật Windows..." -ForegroundColor Cyan
-    Install-Module PSWindowsUpdate -Force -SkipPublisherCheck
+    Install-Module PSWindowsUpdate -Force -SkipPublisherCheck -ErrorAction SilentlyContinue # Thêm ErrorAction để bỏ qua lỗi nếu đã cài
     Import-Module PSWindowsUpdate
     Get-WindowsUpdate
     Install-WindowsUpdate -AcceptAll -AutoReboot:$false
@@ -99,13 +99,6 @@ function Clean-Disk {
     Write-Host "Đã dọn dẹp xong ổ đĩa." -ForegroundColor Green
 }
 
-# Hàm kiểm tra và cập nhật các ứng dụng đã cài đặt
-function Update-Apps {
-    Write-Host "Đang cập nhật các ứng dụng..." -ForegroundColor Cyan
-    choco upgrade all -y
-    Write-Host "Đã cập nhật tất cả ứng dụng." -ForegroundColor Green
-}
-
 # Menu cho phép người dùng lựa chọn
 $menuActions = @{
     '1' = { Install-Chocolatey }
@@ -117,7 +110,7 @@ $menuActions = @{
     '7' = { Backup-Driver }
     '8' = { Update-Windows }
     '9' = { Clean-Disk }
-    '10' = { Update-Apps }
+    # Đã xóa mục 10
 }
 
 do {
@@ -131,7 +124,7 @@ do {
     Write-Host "7. Backup Driver"
     Write-Host "8. Cập nhật Windows"
     Write-Host "9. Dọn dẹp ổ đĩa"
-    Write-Host "10. Cập nhật tất cả ứng dụng"
+    # Đã xóa mục 10
     Write-Host "Q. Thoát chương trình"
     $choice = Read-Host "Nhập lựa chọn của bạn"
 
