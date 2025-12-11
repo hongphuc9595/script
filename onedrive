@@ -1,0 +1,125 @@
+# OneDrive Cache Clear and Restart Script
+# Dành cho IT Helpdesk - Xử lý lỗi credential cache
+
+Write-Host "========================================" -ForegroundColor Cyan
+Write-Host "  OneDrive Cache Clear & Restart Tool" -ForegroundColor Cyan
+Write-Host "========================================" -ForegroundColor Cyan
+Write-Host ""
+
+# 1. Dừng tiến trình OneDrive
+Write-Host "[1/5] Đang dừng OneDrive..." -ForegroundColor Yellow
+$oneDriveProcesses = Get-Process -Name "OneDrive" -ErrorAction SilentlyContinue
+if ($oneDriveProcesses) {
+    Stop-Process -Name "OneDrive" -Force
+    Start-Sleep -Seconds 3
+    Write-Host "      OneDrive đã được dừng." -ForegroundColor Green
+} else {
+    Write-Host "      OneDrive không đang chạy." -ForegroundColor Gray
+}
+
+# 2. Clear Credential Manager entries cho OneDrive
+Write-Host "[2/5] Đang xóa credentials OneDrive..." -ForegroundColor Yellow
+$credentialTargets = @(
+    "OneDrive*",
+    "MicrosoftAccount:*",
+    "SSO_POP*"
+)
+
+foreach ($target in $credentialTargets) {
+    $creds = cmdkey /list | Select-String -Pattern $target
+    if ($creds) {
+        $creds | ForEach-Object {
+            $line = $_.Line
+            if ($line -match "Target:\s*(.+)") {
+                $targetName = $matches[1].Trim()
+                cmdkey /delete:$targetName 2>$null
+                Write-Host "      Đã xóa: $targetName" -ForegroundColor Gray
+            }
+        }
+    }
+}
+Write-Host "      Credentials đã được xóa." -ForegroundColor Green
+
+# 3. Clear OneDrive cache folders
+Write-Host "[3/5] Đang xóa cache folders..." -ForegroundColor Yellow
+
+$cachePaths = @(
+    "$env:LOCALAPPDATA\Microsoft\OneDrive\logs",
+    "$env:LOCALAPPDATA\Microsoft\OneDrive\settings",
+    "$env:LOCALAPPDATA\Microsoft\Office\16.0\OfficeFileCache",
+    "$env:LOCALAPPDATA\Microsoft\Office\Spw",
+    "$env:LOCALAPPDATA\Temp\OneDrive*"
+)
+
+foreach ($path in $cachePaths) {
+    $resolvedPaths = Resolve-Path -Path $path -ErrorAction SilentlyContinue
+    foreach ($resolvedPath in $resolvedPaths) {
+        if (Test-Path $resolvedPath) {
+            try {
+                Remove-Item -Path $resolvedPath -Recurse -Force -ErrorAction SilentlyContinue
+                Write-Host "      Đã xóa: $resolvedPath" -ForegroundColor Gray
+            } catch {
+                Write-Host "      Không thể xóa: $resolvedPath" -ForegroundColor Red
+            }
+        }
+    }
+}
+Write-Host "      Cache folders đã được xóa." -ForegroundColor Green
+
+# 4. Clear Identity Cache trong Registry
+Write-Host "[4/5] Đang xóa Identity Cache trong Registry..." -ForegroundColor Yellow
+
+$regPaths = @(
+    "HKCU:\Software\Microsoft\OneDrive\Accounts",
+    "HKCU:\Software\Microsoft\Office\16.0\Common\Identity"
+)
+
+foreach ($regPath in $regPaths) {
+    if (Test-Path $regPath) {
+        try {
+            Remove-Item -Path $regPath -Recurse -Force -ErrorAction SilentlyContinue
+            Write-Host "      Đã xóa: $regPath" -ForegroundColor Gray
+        } catch {
+            Write-Host "      Không thể xóa: $regPath" -ForegroundColor Red
+        }
+    }
+}
+Write-Host "      Registry cache đã được xóa." -ForegroundColor Green
+
+# 5. Reset OneDrive (optional - uncomment nếu cần)
+Write-Host "[5/5] Đang reset và khởi động lại OneDrive..." -ForegroundColor Yellow
+
+# Tìm đường dẫn OneDrive.exe
+$oneDrivePaths = @(
+    "$env:LOCALAPPDATA\Microsoft\OneDrive\OneDrive.exe",
+    "$env:ProgramFiles\Microsoft OneDrive\OneDrive.exe",
+    "${env:ProgramFiles(x86)}\Microsoft OneDrive\OneDrive.exe"
+)
+
+$oneDriveExe = $null
+foreach ($path in $oneDrivePaths) {
+    if (Test-Path $path) {
+        $oneDriveExe = $path
+        break
+    }
+}
+
+if ($oneDriveExe) {
+    # Reset OneDrive
+    Start-Process -FilePath $oneDriveExe -ArgumentList "/reset" -Wait -ErrorAction SilentlyContinue
+    Start-Sleep -Seconds 5
+    
+    # Khởi động lại OneDrive
+    Start-Process -FilePath $oneDriveExe
+    Write-Host "      OneDrive đã được khởi động lại." -ForegroundColor Green
+} else {
+    Write-Host "      Không tìm thấy OneDrive.exe!" -ForegroundColor Red
+}
+
+Write-Host ""
+Write-Host "========================================" -ForegroundColor Cyan
+Write-Host "  Hoàn tất! User cần đăng nhập lại." -ForegroundColor Green
+Write-Host "========================================" -ForegroundColor Cyan
+Write-Host ""
+Write-Host "Lưu ý: Nếu vấn đề vẫn còn, thử chạy:" -ForegroundColor Yellow
+Write-Host '  %localappdata%\Microsoft\OneDrive\OneDrive.exe /reset' -ForegroundColor White
