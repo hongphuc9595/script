@@ -29,6 +29,98 @@ function Install-Apps {
     Write-Host "`n✅ Hoàn tất cài đặt ứng dụng!" -ForegroundColor Green
 }
 
+# Hàm cài đặt Office 2024 LTSC tự động qua ODT
+function Install-Office {
+    Write-Host "`n📦 Bắt đầu cài đặt Microsoft Office 2024 LTSC..." -ForegroundColor Cyan
+
+    # Kiểm tra quyền Admin
+    $isAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+    if (-not $isAdmin) {
+        Write-Host "  ✘ Cần chạy với quyền Administrator." -ForegroundColor Red
+        return
+    }
+
+    # Tạo thư mục làm việc
+    $workDir = "$env:TEMP\ODT_Office2024"
+    if (-not (Test-Path $workDir)) { New-Item -ItemType Directory -Path $workDir -Force | Out-Null }
+
+    try {
+        # Bước 1: Cài ODT qua winget (luôn lấy bản mới nhất)
+        Write-Host "  → [1/4] Đang cài Office Deployment Tool qua Winget..." -ForegroundColor Yellow
+        winget install --exact --silent Microsoft.OfficeDeploymentTool --accept-package-agreements --accept-source-agreements
+        if ($LASTEXITCODE -ne 0) { throw "Không thể cài Office Deployment Tool qua winget." }
+
+        # Tìm setup.exe từ ODT vừa cài
+        $odtInstallPath = "${env:ProgramFiles}\Microsoft Office\root\ODT"
+        $odtAltPath     = "${env:ProgramFiles(x86)}\Microsoft Office\root\ODT"
+        $setupPath = if (Test-Path "$odtInstallPath\setup.exe") { "$odtInstallPath\setup.exe" }
+                     elseif (Test-Path "$odtAltPath\setup.exe") { "$odtAltPath\setup.exe" }
+                     else {
+                         # Fallback: tìm setup.exe trong toàn bộ Program Files
+                         Get-ChildItem "C:\Program Files*" -Recurse -Filter "setup.exe" -ErrorAction SilentlyContinue |
+                             Where-Object { $_.DirectoryName -like "*Office*" } |
+                             Select-Object -First 1 -ExpandProperty FullName
+                     }
+
+        if (-not $setupPath) { throw "Không tìm thấy setup.exe sau khi cài ODT." }
+        Write-Host "    ✔ Đã cài ODT. setup.exe: $setupPath" -ForegroundColor Green
+
+        # Bước 2: Tạo thư mục làm việc (bỏ bước giải nén thủ công)
+        Write-Host "  → [2/4] Đang chuẩn bị thư mục làm việc..." -ForegroundColor Yellow
+        Write-Host "    ✔ Sẵn sàng." -ForegroundColor Green
+
+        # Bước 3: Tạo file config.xml cho Office 2024 LTSC Full
+        Write-Host "  → [3/4] Đang tạo cấu hình cài đặt..." -ForegroundColor Yellow
+        $configXml = @"
+<Configuration ID="Office2024-LTSC-Full">
+  <Add OfficeClientEdition="64" Channel="PerpetualVL2024">
+    <Product ID="ProPlus2024Volume" PIDKEY="XJ2XN-FW8RK-P4HMP-DKDBV-GCVGB">
+      <Language ID="vi-vn" />
+      <Language ID="en-us" />
+      <ExcludeApp ID="Access" />
+      <ExcludeApp ID="Publisher" />
+      <ExcludeApp ID="Lync" />
+      <ExcludeApp ID="Groove" />
+    </Product>
+  </Add>
+  <Property Name="SharedComputerLicensing" Value="0" />
+  <Property Name="FORCEAPPSHUTDOWN" Value="TRUE" />
+  <Property Name="DeviceBasedLicensing" Value="0" />
+  <Property Name="SCLCacheOverride" Value="0" />
+  <Updates Enabled="TRUE" />
+  <RemoveMSI />
+  <AppSettings>
+    <User Key="software\microsoft\office\16.0\excel\options" Name="defaultformat" Value="51" Type="REG_DWORD" App="excel16" Id="L_SaveExcelfilesas" />
+    <User Key="software\microsoft\office\16.0\powerpoint\options" Name="defaultformat" Value="27" Type="REG_DWORD" App="ppt16" Id="L_SavePowerPointfilesas" />
+    <User Key="software\microsoft\office\16.0\word\options" Name="defaultformat" Value="" Type="REG_SZ" App="word16" Id="L_SaveWordfilesas" />
+  </AppSettings>
+  <Display Level="None" AcceptEULA="TRUE" />
+  <Logging Level="Standard" Path="%TEMP%" />
+</Configuration>
+"@
+        $configPath = "$workDir\config.xml"
+        $configXml | Out-File -FilePath $configPath -Encoding UTF8 -Force
+        Write-Host "    ✔ Đã tạo config.xml (Office 2024 LTSC, 64-bit, Tiếng Việt + Tiếng Anh)." -ForegroundColor Green
+
+        # Bước 4: Tải và cài Office
+        Write-Host "  → [4/4] Đang tải và cài Office 2024 (~3GB, có thể mất 15-30 phút)..." -ForegroundColor Yellow
+        Write-Host "         Vui lòng không tắt máy hoặc đóng cửa sổ này!" -ForegroundColor DarkYellow
+        Start-Process -FilePath $setupPath -ArgumentList "/configure `"$configPath`"" -Wait -ErrorAction Stop
+        Write-Host "    ✔ Đã cài đặt Office 2024 LTSC thành công!" -ForegroundColor Green
+
+        # Dọn dẹp file tạm
+        Remove-Item -Path $workDir -Recurse -Force -ErrorAction SilentlyContinue
+
+        Write-Host "`n✅ Office 2024 LTSC đã được cài đặt!" -ForegroundColor Green
+        Write-Host "   Gồm: Word, Excel, PowerPoint, Outlook, OneNote" -ForegroundColor White
+        Write-Host "   Dùng option [3] Kích hoạt Office để active sau khi cài." -ForegroundColor Cyan
+
+    } catch {
+        Write-Host "  ✘ Lỗi trong quá trình cài Office: $($_.Exception.Message)" -ForegroundColor Red
+        Write-Host "    Vui lòng kiểm tra kết nối internet và thử lại." -ForegroundColor Yellow
+    }
+}
+
 # Hàm kích hoạt Office
 function Activate-Office {
     $script = irm https://get.activated.win
@@ -239,21 +331,23 @@ function Optimize-Performance {
 # Menu cho phép người dùng lựa chọn
 $menuActions = @{
     '1' = { Install-Apps }
-    '2' = { Activate-Office }
-    '3' = { Backup-Driver }
-    '4' = { Update-Windows }
-    '5' = { Clean-Disk }
-    '6' = { Optimize-Performance }
+    '2' = { Install-Office }
+    '3' = { Activate-Office }
+    '4' = { Backup-Driver }
+    '5' = { Update-Windows }
+    '6' = { Clean-Disk }
+    '7' = { Optimize-Performance }
 }
 
 do {
     Write-Host "======== Menu Options ========"
     Write-Host "1. Cài đặt ứng dụng cần thiết (Winget)"
-    Write-Host "2. Kích hoạt Office"
-    Write-Host "3. Backup Driver"
-    Write-Host "4. Cập nhật Windows"
-    Write-Host "5. Dọn dẹp ổ đĩa"
-    Write-Host "6. Tối ưu hiệu suất hệ thống"
+    Write-Host "2. Cài đặt Office 2024 LTSC (tự động)"
+    Write-Host "3. Kích hoạt Office"
+    Write-Host "4. Backup Driver"
+    Write-Host "5. Cập nhật Windows"
+    Write-Host "6. Dọn dẹp ổ đĩa"
+    Write-Host "7. Tối ưu hiệu suất hệ thống"
     Write-Host "Q. Thoát chương trình"
     $choice = Read-Host "Nhập lựa chọn của bạn"
 
